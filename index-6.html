@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="SmartDoc Tools - PDF, Image and PVC ID Card tools">
+<title>SmartDoc Tools v3</title>
+<script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,Arial;background:#f3f6fb;color:#152033}
+header{background:linear-gradient(135deg,#102a72,#2875f0);color:#fff;padding:25px 16px;text-align:center}
+h1{margin:0;font-size:30px}header p{margin:6px 0 0}
+main{max-width:1100px;margin:auto;padding:16px}.search{width:100%;padding:14px;border:1px solid #d5dceb;border-radius:12px;font-size:16px;margin-bottom:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.tool{background:#fff;border:1px solid #e4e8f0;border-radius:16px;padding:18px;box-shadow:0 4px 15px #0001}
+.tool .ico{font-size:32px}.tool h3{margin:8px 0 5px}.tool p{margin:0 0 12px;color:#667085;font-size:14px}
+button{border:0;border-radius:10px;padding:11px 15px;background:#2166e8;color:#fff;font-weight:600;cursor:pointer}
+button.alt{background:#e9efff;color:#17459f}button.green{background:#16834a}
+.screen{display:none;background:#fff;border-radius:16px;padding:20px;margin-top:16px;box-shadow:0 4px 15px #0001}.screen.show{display:block}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.box{border:2px dashed #b8c2d7;border-radius:14px;padding:22px;text-align:center;margin:14px 0}
+input,select{padding:10px;border:1px solid #cbd3e1;border-radius:9px;max-width:100%}
+.status{padding:12px;background:#f5f7fb;border-radius:10px;margin-top:12px;color:#475467;word-break:break-word}
+.small{font-size:13px;color:#667085}.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.preview{border:1px solid #dfe5ef;border-radius:12px;padding:10px;background:#f8fafc;text-align:center}.preview iframe{width:100%;height:250px;border:0;background:#fff;border-radius:8px}
+footer{text-align:center;padding:25px;color:#667085}@media(max-width:650px){.cards{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header><h1>SmartDoc Tools</h1><p>All-in-One PDF, Image & Card Tools • v3</p></header>
+<main>
+<input id="search" class="search" placeholder="🔍 Search tools...">
+<section id="home" class="grid">
+<article class="tool" data-tags="pdf resize"><div class="ico">📄</div><h3>PDF Resize</h3><p>Resize PDF pages to A4, Letter or PVC.</p><button data-open="pdf">Open Tool</button></article>
+<article class="tool" data-tags="pdf merge split rotate"><div class="ico">🔄</div><h3>PDF Manager</h3><p>Merge, split and rotate PDF files.</p><button data-open="manager">Open Tool</button></article>
+<article class="tool" data-tags="image resize compress"><div class="ico">🖼️</div><h3>Image Resize</h3><p>Resize and compress JPG/PNG.</p><button data-open="image">Open Tool</button></article>
+<article class="tool" data-tags="jpg pdf"><div class="ico">🔁</div><h3>JPG to PDF</h3><p>Create a real PDF from an image.</p><button data-open="convert">Open Tool</button></article>
+<article class="tool" data-tags="pvc aadhaar voter pan ayushman dl rc"><div class="ico">🪪</div><h3>PVC Card Maker</h3><p>Aadhaar, Voter, Ayushman, PAN, DL, RC — front/back PDF.</p><button data-open="pvc">Open Tool</button></article>
+<article class="tool" data-tags="photo signature"><div class="ico">📸</div><h3>Photo / Signature</h3><p>Exact pixel size and JPG download.</p><button data-open="photo">Open Tool</button></article>
+</section>
+
+<section id="pdf" class="screen">
+<button class="alt" data-home>← Home</button><h2>📄 PDF Resize</h2>
+<div class="box"><input id="pdfInput" type="file" accept="application/pdf,.pdf"><div id="pdfInfo" class="status">PDF only.</div></div>
+<div class="row"><select id="pdfSize"><option value="a4">A4 — 210 × 297 mm</option><option value="letter">Letter — 216 × 279 mm</option><option value="pvc">PVC — 85.60 × 53.98 mm</option></select><button id="resizePdf">Resize & Download PDF</button></div>
+</section>
+
+<section id="manager" class="screen">
+<button class="alt" data-home>← Home</button><h2>🔄 PDF Manager</h2>
+<div class="box"><input id="pdfFiles" type="file" accept="application/pdf,.pdf" multiple><div id="managerInfo" class="status">PDF only.</div></div>
+<div class="row"><button id="merge">Merge PDFs</button><button id="split">Split First PDF</button><button id="rotate">Rotate 90°</button></div>
+</section>
+
+<section id="image" class="screen">
+<button class="alt" data-home>← Home</button><h2>🖼️ Image Resize</h2>
+<input id="img" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+<div class="row"><label>W <input id="iw" type="number" value="600"></label><label>H <input id="ih" type="number" value="800"></label><label>Quality <input id="iq" type="number" value="80" min="10" max="100"></label></div>
+<button id="imgGo">Resize & Download JPG</button><div id="imgInfo" class="status"></div>
+</section>
+
+<section id="convert" class="screen">
+<button class="alt" data-home>← Home</button><h2>🔁 JPG to PDF</h2>
+<input id="conv" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+<button id="convGo">Create PDF & Download</button><div id="convInfo" class="status"></div>
+</section>
+
+<section id="pvc" class="screen">
+<button class="alt" data-home>← Home</button><h2>🪪 PVC Card Maker — Double Side</h2>
+<p><b>PVC size:</b> 85.60 × 53.98 mm</p>
+<select id="cardType"><option>Aadhaar Card</option><option>Voter ID</option><option>Ayushman Card</option><option>PAN Card</option><option>Driving Licence (DL)</option><option>Registration Certificate (RC)</option></select>
+<div class="box"><b>Only PDF accepted</b><div class="row">
+<label>Front PDF <input id="front" type="file" accept="application/pdf,.pdf"></label>
+<label>Back PDF <input id="back" type="file" accept="application/pdf,.pdf"></label>
+</div><div id="pvcInfo" class="status">Select front/back PDF.</div></div>
+<div class="row"><button id="frontPreview">Preview Front</button><button id="backPreview">Preview Back</button><button class="green" id="makePVC">Create Double-Side PDF</button></div>
+<div class="cards"><div class="preview"><b>FRONT</b><div id="frontBox">No PDF</div></div><div class="preview"><b>BACK</b><div id="backBox">No PDF</div></div></div>
+</section>
+
+<section id="photo" class="screen">
+<button class="alt" data-home>← Home</button><h2>📸 Photo / Signature</h2>
+<input id="photo" type="file" accept="image/jpeg,image/png,.jpg,.jpeg,.png">
+<div class="row"><label>W <input id="pw" type="number" value="300"></label><label>H <input id="ph" type="number" value="400"></label><label>Quality <input id="pq" type="number" value="85" min="10" max="100"></label></div>
+<button id="photoGo">Resize & Download</button><div id="photoInfo" class="status"></div>
+</section>
+</main><footer>© 2026 SmartDoc Tools • Browser-only tools</footer>
+
+<script>
+const {PDFDocument}=PDFLib,MM=72/25.4,PVCW=85.6*MM,PVCH=53.98*MM;
+const $=id=>document.getElementById(id),screens=[...document.querySelectorAll('.screen')],home=$('home');
+function show(id){home.style.display='none';screens.forEach(x=>x.classList.remove('show'));$(id).classList.add('show');scrollTo(0,0)}
+function homeGo(){screens.forEach(x=>x.classList.remove('show'));home.style.display='grid';scrollTo(0,0)}
+document.querySelectorAll('[data-open]').forEach(b=>b.onclick=()=>show(b.dataset.open));
+document.querySelectorAll('[data-home]').forEach(b=>b.onclick=homeGo);
+$('search').oninput=e=>{let q=e.target.value.toLowerCase().trim();document.querySelectorAll('.tool').forEach(x=>x.style.display=!q||x.dataset.tags.includes(q)?'block':'none')};
+const pdf=f=>f&&(f.type==='application/pdf'||/\.pdf$/i.test(f.name)),imgf=f=>f&&(/^image\/(jpeg|png)$/.test(f.type)||/\.(jpe?g|png)$/i.test(f.name));
+const bytes=f=>f.arrayBuffer(),dl=(b,n)=>{let a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=n;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1500)};
+$('pdfInput').onchange=async e=>{let f=e.target.files[0];if(!pdf(f)){e.target.value='';$('pdfInfo').textContent='❌ PDF only.';return}let p=await PDFDocument.load(await bytes(f));$('pdfInfo').textContent='✅ '+f.name+' • '+p.getPageCount()+' page(s)'};
+$('resizePdf').onclick=async()=>{let f=$('pdfInput').files[0];if(!pdf(f))return $('pdfInfo').textContent='❌ Select PDF first.';let p=await PDFDocument.load(await bytes(f)),v={a4:[210*MM,297*MM],letter:[216*MM,279*MM],pvc:[PVCW,PVCH]}[$('pdfSize').value];p.getPages().forEach(x=>{let sx=v[0]/x.getWidth(),sy=v[1]/x.getHeight();x.scaleContent(sx,sy);x.scaleAnnotations(sx,sy);x.setSize(v[0],v[1])});dl(new Blob([await p.save()],{type:'application/pdf'}),'smartdoc-resized.pdf');$('pdfInfo').textContent='✅ Resized PDF downloaded.'};
+$('pdfFiles').onchange=e=>{let a=[...e.target.files];$('managerInfo').textContent=a.every(pdf)?'✅ '+a.length+' PDF file(s) selected.':'❌ PDF only.'};
+$('merge').onclick=async()=>{let fs=[...$('pdfFiles').files];if(!fs.length)return;let o=await PDFDocument.create();for(let f of fs){let p=await PDFDocument.load(await bytes(f));(await o.copyPages(p,p.getPageIndices())).forEach(x=>o.addPage(x))}dl(new Blob([await o.save()],{type:'application/pdf'}),'smartdoc-merged.pdf')};
+$('split').onclick=async()=>{let f=$('pdfFiles').files[0];if(!pdf(f))return;let p=await PDFDocument.load(await bytes(f)),z=new JSZip();for(let i=0;i<p.getPageCount();i++){let o=await PDFDocument.create();o.addPage((await o.copyPages(p,[i]))[0]);z.file('page-'+(i+1)+'.pdf',await o.save())}dl(await z.generateAsync({type:'blob'}),'smartdoc-split.zip')};
+$('rotate').onclick=async()=>{let f=$('pdfFiles').files[0];if(!pdf(f))return;let p=await PDFDocument.load(await bytes(f));p.getPages().forEach(x=>x.setRotation({type:'degrees',angle:(x.getRotation().angle+90)%360}));dl(new Blob([await p.save()],{type:'application/pdf'}),'smartdoc-rotated.pdf')};
+function imageFile(f,cb){if(!imgf(f))return alert('JPG or PNG only.');let r=new FileReader();r.onload=()=>{let i=new Image();i.onload=()=>cb(i);i.src=r.result};r.readAsDataURL(f)}
+function resizeImage(f,w,h,q,name,status){imageFile(f,i=>{let c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(i,0,0,w,h);c.toBlob(b=>{dl(b,name);status.textContent='✅ Downloaded.'},'image/jpeg',q/100)})}
+$('imgGo').onclick=()=>resizeImage($('img').files[0],+$('iw').value,+$('ih').value,+$('iq').value,'smartdoc-resized.jpg',$('imgInfo'));
+$('photoGo').onclick=()=>resizeImage($('photo').files[0],+$('pw').value,+$('ph').value,+$('pq').value,'smartdoc-photo.jpg',$('photoInfo'));
+$('convGo').onclick=async()=>{let f=$('conv').files[0];if(!imgf(f))return $('convInfo').textContent='❌ JPG/PNG only.';let p=await PDFDocument.create(),d=await bytes(f),im=f.type==='image/png'?await p.embedPng(d):await p.embedJpg(d),page=p.addPage([595.28,841.89]),s=Math.min(545/im.width,791/im.height),w=im.width*s,h=im.height*s;page.drawImage(im,{x:(595.28-w)/2,y:(841.89-h)/2,width:w,height:h});dl(new Blob([await p.save()],{type:'application/pdf'}),'smartdoc-image.pdf');$('convInfo').textContent='✅ PDF downloaded.'};
+function prev(input,box){let f=$(input).files[0];if(!pdf(f))return $('pvcInfo').textContent='❌ PDF only.';let u=URL.createObjectURL(f);$(box).innerHTML='<iframe src="'+u+'#page=1&toolbar=0"></iframe>'}
+$('frontPreview').onclick=()=>prev('front','frontBox');$('backPreview').onclick=()=>prev('back','backBox');
+$('makePVC').onclick=async()=>{let fs=[$('front').files[0],$('back').files[0]].filter(pdf);if(!fs.length)return $('pvcInfo').textContent='❌ Select at least one PDF.';let o=await PDFDocument.create();for(let f of fs){let s=await PDFDocument.load(await bytes(f)),e=await o.embedPage(s.getPages()[0]),p=o.addPage([PVCW,PVCH]),sc=Math.min(PVCW/e.width,PVCH/e.height),w=e.width*sc,h=e.height*sc;p.drawPage(e,{x:(PVCW-w)/2,y:(PVCH-h)/2,width:w,height:h})}let n=$('cardType').value.replace(/[^a-z0-9]+/gi,'-').toLowerCase();dl(new Blob([await o.save()],{type:'application/pdf'}),n+'-pvc-double-side.pdf');$('pvcInfo').textContent='✅ Double-side PVC PDF downloaded.'};
+</script>
+</body>
+</html>
